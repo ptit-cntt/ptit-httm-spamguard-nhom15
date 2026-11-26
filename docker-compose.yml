@@ -1,0 +1,75 @@
+# Chạy:   cp .env.example .env && docker compose up -d --build
+# MLOps:  docker compose --profile mlops up -d   (thêm job retrain định kỳ)
+name: spamguard
+
+x-db-url: &db-url postgresql+psycopg://${POSTGRES_USER:-spamguard}:${POSTGRES_PASSWORD:-spamguard}@postgres:5432/${POSTGRES_DB:-spamguard}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-spamguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-spamguard}
+      POSTGRES_DB: ${POSTGRES_DB:-spamguard}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-spamguard}"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: {context: ., dockerfile: docker/api.Dockerfile}
+    image: spamguard-api:latest
+    environment:
+      DATABASE_URL: *db-url
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-admin-dev-token}
+    volumes:
+      - ./models:/app/models          # Model Registry dùng chung với trainer
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: unless-stopped
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.6.0
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+    volumes: [mlflowdata:/mlflow]
+    ports: ["5000:5000"]
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+    ports: ["9090:9090"]
+    depends_on: [api]
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+    depends_on: [prometheus]
+
+  # Job MLOps Feedback Loop: định kỳ đọc feedback đã duyệt -> retrain -> gate -> promote.
+  retrainer:
+    profiles: [mlops]
+    build: {context: ., dockerfile: docker/trainer.Dockerfile}
+    image: spamguard-trainer:latest
+    environment:
+      DATABASE_URL: *db-url
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      RETRAIN_INTERVAL_SECONDS: ${RETRAIN_INTERVAL_SECONDS:-86400}
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./reports:/app/reports
+    command: ["python", "scripts/retrain_scheduler.py"]
+    depends_on: [postgres, mlflow]
+
+volumes:
+  pgdata:
+  mlflowdata:

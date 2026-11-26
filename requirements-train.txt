@@ -1,0 +1,9 @@
+-r requirements-api.txt
+pandas==3.1.1
+torch==2.15.0
+transformers==5.24.1
+onnx==1.23.2
+onnxscript==0.7.2
+mlflow==3.18.0
+matplotlib>=3.9
+tabulate>=0.9

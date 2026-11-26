@@ -1,0 +1,15 @@
+# Runtime của API Service: KHÔNG có torch/transformers -> image nhẹ.
+# scikit-learn phải trùng version lúc train để joblib load được pipeline.
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.4
+SQLAlchemy==2.1.9
+psycopg[binary]>=3.2
+prometheus_client==0.26.0
+onnxruntime==1.32.0
+tokenizers==0.23.3
+scikit-learn==1.9.1
+scipy==1.18.1
+numpy==2.5.5
+joblib==1.6.0
+PyYAML==6.0.4

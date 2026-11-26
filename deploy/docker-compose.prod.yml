@@ -1,0 +1,83 @@
+# Triển khai lên Docker của PC LAN 192.168.1.5 (điều khiển qua DOCKER_HOST=tcp://192.168.1.5:2375).
+# Chạy từ thư mục gốc project:  docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env up -d --build
+# Không dùng bind mount: mọi file cần thiết được COPY vào image, dữ liệu nằm trong named volume.
+name: spamguard
+
+x-db-url: &db-url postgresql+psycopg://spamguard:${POSTGRES_PASSWORD:?thiếu POSTGRES_PASSWORD}@postgres:5432/spamguard
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: spamguard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: spamguard
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spamguard"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build: {context: .., dockerfile: deploy/api.prod.Dockerfile}
+    image: spamguard-api:prod
+    environment:
+      DATABASE_URL: *db-url
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?thiếu ADMIN_TOKEN}
+    volumes:
+      - models:/app/models   # named volume: lần đầu được khởi tạo từ registry trong image
+    ports: ["${API_PORT:-8010}:8000"]   # Nginx trên server 192.168.1.222 proxy tới cổng này
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: unless-stopped
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.6.0
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+    volumes: [mlflowdata:/mlflow]
+    ports: ["${MLFLOW_PORT:-5010}:5000"]
+    restart: unless-stopped
+
+  prometheus:
+    build: {context: .., dockerfile: deploy/monitoring/prometheus.Dockerfile}
+    image: spamguard-prometheus:prod
+    volumes: [promdata:/prometheus]
+    ports: ["${PROMETHEUS_PORT:-9095}:9090"]
+    depends_on: [api]
+    restart: unless-stopped
+
+  grafana:
+    build: {context: .., dockerfile: deploy/monitoring/grafana.Dockerfile}
+    image: spamguard-grafana:prod
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?thiếu GRAFANA_ADMIN_PASSWORD}
+    volumes: [grafanadata:/var/lib/grafana]
+    ports: ["${GRAFANA_PORT:-3010}:3000"]
+    depends_on: [prometheus]
+    restart: unless-stopped
+
+  # Feedback Loop định kỳ. Image nặng (PyTorch CPU) -> chỉ build khi bật profile mlops:
+  #   docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env --profile mlops up -d --build retrainer
+  retrainer:
+    profiles: [mlops]
+    build: {context: .., dockerfile: deploy/trainer.prod.Dockerfile}
+    image: spamguard-trainer:prod
+    environment:
+      DATABASE_URL: *db-url
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      RETRAIN_INTERVAL_SECONDS: ${RETRAIN_INTERVAL_SECONDS:-86400}
+    volumes:
+      - models:/app/models
+      - reports:/app/reports
+    command: ["python", "scripts/retrain_scheduler.py"]
+    depends_on: [postgres, mlflow]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  models:
+  mlflowdata:
+  promdata:
+  grafanadata:
+  reports:

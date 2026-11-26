@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-26T04:30:54.590231+00:00",
+  "model_type": "distilbert",
+  "production_before": 4,
+  "candidate": 6,
+  "promoted": false,
+  "feedback_used": 150,
+  "feedback_holdout": 30,
+  "test_rows_eval": 4930,
+  "test_rows_removed_overlap": 150,
+  "gate": {
+    "prod_macro_f1": 0.8652283123981186,
+    "candidate_macro_f1": 0.8569677433889172,
+    "max_drop": 0.005,
+    "f1_ok": false,
+    "holdout_ok": true,
+    "prod_holdout": {
+      "feedback_holdout_accuracy": 0.6333333333333333,
+      "feedback_holdout_macro_f1": 0.6317484532587507
+    },
+    "candidate_holdout": {
+      "feedback_holdout_accuracy": 0.7333333333333333,
+      "feedback_holdout_macro_f1": 0.733652312599681
+    }
+  }
+}

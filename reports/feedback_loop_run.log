@@ -1,0 +1,117 @@
+2026-11-26 11:21:18,762 INFO feedback_loop Có 150 feedback (admin) chưa dùng; ngưỡng = 30
+W1126 11:21:21.396000 5869 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 26414.16it/s]
+[transformers] [1mDistilBertForSequenceClassification LOAD REPORT[0m from: distilbert-base-multilingual-cased
+Key                     | Status     | 
+------------------------+------------+-
+vocab_transform.bias    | UNEXPECTED | 
+vocab_layer_norm.weight | UNEXPECTED | 
+vocab_layer_norm.bias   | UNEXPECTED | 
+vocab_projector.bias    | UNEXPECTED | 
+vocab_transform.weight  | UNEXPECTED | 
+classifier.weight       | MISSING    | 
+classifier.bias         | MISSING    | 
+pre_classifier.bias     | MISSING    | 
+pre_classifier.weight   | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+2026-11-26 11:21:41,766 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 100/752 loss=0.9795
+2026-11-26 11:22:01,439 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 200/752 loss=0.8091
+2026-11-26 11:22:21,052 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 300/752 loss=0.7038
+2026-11-26 11:22:40,777 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 400/752 loss=0.6511
+2026-11-26 11:22:59,767 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 500/752 loss=0.6037
+2026-11-26 11:23:18,748 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 600/752 loss=0.5728
+2026-11-26 11:23:37,958 INFO spamguard.models.distilbert [DistilBERT] epoch 1 step 700/752 loss=0.5512
+2026-11-26 11:23:55,665 INFO spamguard.models.distilbert [DistilBERT] epoch 1 val_macro_f1=0.8399
+2026-11-26 11:24:15,405 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 100/752 loss=0.3017
+2026-11-26 11:24:37,292 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 200/752 loss=0.3066
+2026-11-26 11:25:00,257 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 300/752 loss=0.3029
+2026-11-26 11:25:23,179 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 400/752 loss=0.2993
+2026-11-26 11:25:45,158 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 500/752 loss=0.2985
+2026-11-26 11:26:07,856 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 600/752 loss=0.2935
+2026-11-26 11:26:28,426 INFO spamguard.models.distilbert [DistilBERT] epoch 2 step 700/752 loss=0.2939
+2026-11-26 11:26:46,885 INFO spamguard.models.distilbert [DistilBERT] epoch 2 val_macro_f1=0.8543
+2026-11-26 11:27:06,708 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 100/752 loss=0.1833
+2026-11-26 11:27:26,573 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 200/752 loss=0.1799
+2026-11-26 11:27:46,038 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 300/752 loss=0.1877
+2026-11-26 11:28:05,736 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 400/752 loss=0.1846
+2026-11-26 11:28:25,372 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 500/752 loss=0.1844
+2026-11-26 11:28:44,630 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 600/752 loss=0.1832
+2026-11-26 11:29:03,889 INFO spamguard.models.distilbert [DistilBERT] epoch 3 step 700/752 loss=0.1827
+2026-11-26 11:29:21,936 INFO spamguard.models.distilbert [DistilBERT] epoch 3 val_macro_f1=0.8586
+/Users/manhnv/PTIT/HeThongThongMinh/PhamManh/.venv/lib/python3.14/site-packages/transformers/masking_utils.py:229: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if (padding_length := kv_length + kv_offset - attention_mask.shape[-1]) > 0:
+/Users/manhnv/PTIT/HeThongThongMinh/PhamManh/.venv/lib/python3.14/site-packages/transformers/integrations/sdpa_attention.py:148: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  is_causal = q_length > 1 and attention_mask is None and is_causal
+/Users/manhnv/PTIT/HeThongThongMinh/PhamManh/.venv/lib/python3.14/site-packages/torch/onnx/_internal/torchscript_exporter/symbolic_opset11.py:955: UserWarning: Exporting aten::index operator of advanced indexing in opset 17 is achieved by combination of multiple ONNX operators, including Reshape, Transpose, Concat, and Gather. If indices include negative values, the exported graph will produce incorrect results.
+  return opset9.index(g, self, index)
+2026-11-26 11:29:23,209 WARNING root Please consider to run pre-processing before quantization. Refer to example: https://github.com/microsoft/onnxruntime-inference-examples/blob/main/quantization/image_classification/cpu/ReadMe.md 
+2026-11-26 11:29:23,740 INFO root Quantization parameters for tensor:"/model/distilbert/embeddings/LayerNorm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,743 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.0/attention/MatMul]
+2026-11-26 11:29:23,743 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.0/attention/MatMul_1]
+2026-11-26 11:29:23,743 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.0/attention/Reshape_4_output_0" not specified
+2026-11-26 11:29:23,744 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.0/sa_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,748 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.0/ffn/activation/Mul_1_output_0" not specified
+2026-11-26 11:29:23,751 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.0/output_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,754 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.1/attention/MatMul]
+2026-11-26 11:29:23,754 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.1/attention/MatMul_1]
+2026-11-26 11:29:23,754 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.1/attention/Reshape_4_output_0" not specified
+2026-11-26 11:29:23,755 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.1/sa_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,759 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.1/ffn/activation/Mul_1_output_0" not specified
+2026-11-26 11:29:23,762 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.1/output_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,765 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.2/attention/MatMul]
+2026-11-26 11:29:23,765 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.2/attention/MatMul_1]
+2026-11-26 11:29:23,766 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.2/attention/Reshape_4_output_0" not specified
+2026-11-26 11:29:23,767 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.2/sa_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,770 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.2/ffn/activation/Mul_1_output_0" not specified
+2026-11-26 11:29:23,774 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.2/output_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,777 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.3/attention/MatMul]
+2026-11-26 11:29:23,777 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.3/attention/MatMul_1]
+2026-11-26 11:29:23,777 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.3/attention/Reshape_4_output_0" not specified
+2026-11-26 11:29:23,778 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.3/sa_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,782 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.3/ffn/activation/Mul_1_output_0" not specified
+2026-11-26 11:29:23,786 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.3/output_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,789 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.4/attention/MatMul]
+2026-11-26 11:29:23,789 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.4/attention/MatMul_1]
+2026-11-26 11:29:23,789 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.4/attention/Reshape_4_output_0" not specified
+2026-11-26 11:29:23,791 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.4/sa_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,794 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.4/ffn/activation/Mul_1_output_0" not specified
+2026-11-26 11:29:23,798 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.4/output_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,801 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.5/attention/MatMul]
+2026-11-26 11:29:23,801 INFO root Ignore MatMul due to non constant B: /[/model/distilbert/transformer/layer.5/attention/MatMul_1]
+2026-11-26 11:29:23,801 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.5/attention/Reshape_4_output_0" not specified
+2026-11-26 11:29:23,802 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.5/sa_layer_norm/LayerNormalization_output_0" not specified
+2026-11-26 11:29:23,806 INFO root Quantization parameters for tensor:"/model/distilbert/transformer/layer.5/ffn/activation/Mul_1_output_0" not specified
+2026-11-26 11:29:23,809 INFO root Quantization parameters for tensor:"/model/Gather_output_0" not specified
+2026-11-26 11:29:23,811 INFO root Quantization parameters for tensor:"/model/Relu_output_0" not specified
+2026-11-26 11:29:23,896 INFO spamguard.models.distilbert Đã export ONNX INT8 tại /var/folders/8_/5ld6lzh10nxfh8mj7fn44xm00000gn/T/tmpk_y9_c96/distilbert/model.onnx
+2026-11-26 11:30:10,236 INFO spamguard.training Đã đăng ký distilbert thành v6 macro_f1=0.8570 p95=7.5ms
+2026-11-26 11:30:54,590 WARNING feedback_loop Gate FAILED: giữ nguyên production v4
+{
+  "at": "2026-11-26T04:30:54.590231+00:00",
+  "model_type": "distilbert",
+  "production_before": 4,
+  "candidate": 6,
+  "promoted": false,
+  "feedback_used": 150,
+  "feedback_holdout": 30,
+  "test_rows_eval": 4930,
+  "test_rows_removed_overlap": 150,
+  "gate": {
+    "prod_macro_f1": 0.8652283123981186,
+    "candidate_macro_f1": 0.8569677433889172,
+    "max_drop": 0.005,
+    "f1_ok": false,
+    "holdout_ok": true,
+    "prod_holdout": {
+      "feedback_holdout_accuracy": 0.6333333333333333,
+      "feedback_holdout_macro_f1": 0.6317484532587507
+    },
+    "candidate_holdout": {
+      "feedback_holdout_accuracy": 0.7333333333333333,
+      "feedback_holdout_macro_f1": 0.733652312599681
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "cleaning": {
+    "raw_rows": 83627,
+    "after_dropna": 83625,
+    "after_min_chars": 83502,
+    "conflicting_texts_removed": 221,
+    "after_dedup": 80069,
+    "per_source_after_clean": {
+      "davidson_en|ham": 4163,
+      "davidson_en|toxic": 20620,
+      "sms_spam_en|ham": 4516,
+      "sms_spam_en|spam": 642,
+      "vihsd_vi|ham": 24986,
+      "vihsd_vi|toxic": 5326,
+      "vispam_vi|ham": 14600,
+      "vispam_vi|spam": 5216
+    }
+  },
+  "train": {
+    "rows": 23703,
+    "by_label": {
+      "ham": 12725,
+      "toxic": 6878,
+      "spam": 4100
+    },
+    "by_lang": {
+      "vi": 14028,
+      "en": 9675
+    },
+    "by_source_label": {
+      "davidson_en|ham": 2907,
+      "davidson_en|toxic": 3150,
+      "sms_spam_en|ham": 3168,
+      "sms_spam_en|spam": 450,
+      "vihsd_vi|ham": 3498,
+      "vihsd_vi|toxic": 3728,
+      "vispam_vi|ham": 3152,
+      "vispam_vi|spam": 3650
+    }
+  },
+  "val": {
+    "rows": 5080,
+    "by_label": {
+      "ham": 2727,
+      "toxic": 1474,
+      "spam": 879
+    },
+    "by_lang": {
+      "vi": 3007,
+      "en": 2073
+    },
+    "by_source_label": {
+      "davidson_en|ham": 614,
+      "davidson_en|toxic": 675,
+      "sms_spam_en|ham": 688,
+      "sms_spam_en|spam": 96,
+      "vihsd_vi|ham": 755,
+      "vihsd_vi|toxic": 799,
+      "vispam_vi|ham": 670,
+      "vispam_vi|spam": 783
+    }
+  },
+  "test": {
+    "rows": 5080,
+    "by_label": {
+      "ham": 2727,
+      "toxic": 1474,
+      "spam": 879
+    },
+    "by_lang": {
+      "vi": 3007,
+      "en": 2073
+    },
+    "by_source_label": {
+      "davidson_en|ham": 642,
+      "davidson_en|toxic": 675,
+      "sms_spam_en|ham": 660,
+      "sms_spam_en|spam": 96,
+      "vihsd_vi|ham": 747,
+      "vihsd_vi|toxic": 799,
+      "vispam_vi|ham": 678,
+      "vispam_vi|spam": 783
+    }
+  },
+  "data_version": "1de45dc7082e"
+}

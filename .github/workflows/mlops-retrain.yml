@@ -1,0 +1,37 @@
+# MLOps Feedback Loop theo lịch: chạy trên self-hosted runner có quyền truy cập
+# Postgres + thư mục Model Registry của môi trường production.
+name: mlops-retrain
+
+on:
+  schedule:
+    - cron: "0 19 * * *"   # 02:00 giờ Việt Nam mỗi ngày
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Bỏ qua ngưỡng số feedback tối thiểu"
+        type: boolean
+        default: false
+      model:
+        description: "Loại model retrain (để trống = loại model production)"
+        type: choice
+        options: ["", svm, random_forest, bigru, distilbert]
+        default: ""
+
+jobs:
+  retrain:
+    runs-on: [self-hosted, spamguard]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chạy feedback loop trong container trainer
+        env:
+          FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+          MODEL_FLAG: ${{ inputs.model && format('--model {0}', inputs.model) || '' }}
+        run: |
+          docker compose --profile mlops build retrainer
+          docker compose --profile mlops run --rm retrainer \
+            python scripts/retrain_from_feedback.py $FORCE_FLAG $MODEL_FLAG
+      - name: Lưu báo cáo feedback loop
+        uses: actions/upload-artifact@v4
+        with:
+          name: feedback-loop-report
+          path: reports/feedback_loop/*.json

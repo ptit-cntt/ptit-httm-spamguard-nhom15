@@ -1,0 +1,68 @@
+# Cấu hình trung tâm cho toàn bộ pipeline (data -> train -> registry -> serving).
+# Mọi siêu tham số được log lên MLflow để tái lập thí nghiệm.
+seed: 42
+labels: [ham, spam, toxic]
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  # Giới hạn số mẫu lấy từ mỗi nguồn để cân bằng lớp và ngôn ngữ.
+  # null = lấy toàn bộ.
+  sampling:
+    sms_spam_en: {ham: null, spam: null}
+    davidson_en: {ham: null, toxic: 4500}
+    vispam_vi: {ham: 4500, spam: null}
+    vihsd_vi: {ham: 5000, toxic: null}
+  min_chars: 2
+  test_size: 0.15
+  val_size: 0.15
+
+models:
+  svm:
+    C: 0.8
+    word_ngram_max: 2
+    char_ngram_max: 5
+    max_word_features: 60000
+    max_char_features: 120000
+  random_forest:
+    n_estimators: 400
+    max_depth: null
+    min_samples_leaf: 1
+    max_features: 20000
+  bigru:
+    vocab_size: 40000
+    max_len: 64
+    embed_dim: 128
+    hidden_dim: 128
+    dropout: 0.3
+    epochs: 8
+    batch_size: 64
+    lr: 0.002
+    patience: 2
+  distilbert:
+    pretrained: distilbert-base-multilingual-cased
+    max_len: 96
+    epochs: 3
+    batch_size: 32
+    lr: 0.00004
+    warmup_ratio: 0.06
+    weight_decay: 0.01
+
+selection:
+  metric: macro_f1
+  # Ràng buộc SLA: p95 độ trễ suy luận 1 tin nhắn trên CPU (ms)
+  max_p95_latency_ms: 60
+
+registry:
+  dir: models/registry
+  model_name: spamguard-classifier
+
+serving:
+  block_threshold: 0.80   # xác suất lớp spam/toxic >= ngưỡng -> block
+  review_threshold: 0.60  # max prob < ngưỡng -> đưa vào hàng đợi review
+
+feedback:
+  min_new_samples: 30
+  upsample_factor: 3
+  max_macro_f1_drop: 0.005
+  retrain_model: null   # null = retrain cùng loại với model production

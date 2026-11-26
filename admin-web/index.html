@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpamGuard Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🛡</span> SpamGuard <small>Admin</small></div>
+    <nav id="tabs">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="messages">Tin nhắn</button>
+      <button data-tab="review">Hàng đợi review</button>
+      <button data-tab="models">Model Registry</button>
+      <button data-tab="tester">Thử bộ lọc</button>
+    </nav>
+    <div class="model-badge" id="modelBadge">model: –</div>
+  </header>
+
+  <main>
+    <section id="login" class="card login hidden">
+      <h2>Đăng nhập quản trị</h2>
+      <p>Nhập Admin Token (biến môi trường <code>ADMIN_TOKEN</code> của API).</p>
+      <input id="tokenInput" type="password" placeholder="Admin token" autocomplete="off">
+      <button id="loginBtn" class="primary">Đăng nhập</button>
+      <p id="loginError" class="error"></p>
+    </section>
+
+    <section id="dashboard" class="tab">
+      <div class="toolbar">
+        <label>Khoảng thời gian
+          <select id="daysSelect"><option value="1">24 giờ</option><option value="7" selected>7 ngày</option><option value="30">30 ngày</option></select>
+        </label>
+        <button id="refreshBtn">Làm mới</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><span>Tổng tin nhắn</span><strong id="kpiTotal">–</strong></div>
+        <div class="kpi spam"><span>Tỉ lệ spam</span><strong id="kpiSpam">–</strong></div>
+        <div class="kpi toxic"><span>Tỉ lệ độc hại</span><strong id="kpiToxic">–</strong></div>
+        <div class="kpi"><span>Đã chặn</span><strong id="kpiBlocked">–</strong></div>
+        <div class="kpi"><span>Chờ review</span><strong id="kpiReview">–</strong></div>
+        <div class="kpi"><span>Feedback chờ retrain</span><strong id="kpiFeedback">–</strong></div>
+        <div class="kpi"><span>Độ trễ TB</span><strong id="kpiLatency">–</strong></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h3>Lưu lượng theo ngày</h3><canvas id="timelineChart" height="140"></canvas></div>
+        <div class="card"><h3>Phân bố nhãn</h3><canvas id="labelChart" height="140"></canvas></div>
+        <div class="card"><h3>Theo kênh</h3><canvas id="channelChart" height="140"></canvas></div>
+        <div class="card"><h3>Top sender bị gắn cờ</h3><table class="table" id="sendersTable"></table></div>
+      </div>
+      <div class="card"><h3>Vòng phản hồi MLOps</h3><div id="loopStatus"></div></div>
+    </section>
+
+    <section id="messages" class="tab hidden">
+      <div class="toolbar">
+        <select id="filterLabel"><option value="">Mọi nhãn</option><option>ham</option><option>spam</option><option>toxic</option></select>
+        <select id="filterAction"><option value="">Mọi hành động</option><option>allow</option><option>review</option><option>block</option></select>
+        <input id="filterQuery" placeholder="Tìm nội dung…" maxlength="100">
+        <button id="searchBtn">Lọc</button>
+      </div>
+      <div class="card"><table class="table" id="messagesTable"></table></div>
+    </section>
+
+    <section id="review" class="tab hidden">
+      <p class="hint">Tin nhắn có độ tin cậy thấp hoặc bị nghi ngờ. Nhãn admin gán sẽ trở thành dữ liệu huấn luyện ở vòng retrain tiếp theo.</p>
+      <div class="card"><table class="table" id="reviewTable"></table></div>
+    </section>
+
+    <section id="models" class="tab hidden">
+      <div class="card"><h3>Các phiên bản model</h3><table class="table" id="modelsTable"></table></div>
+      <div class="card"><h3>Lịch sử promote</h3><table class="table" id="historyTable"></table></div>
+    </section>
+
+    <section id="tester" class="tab hidden">
+      <div class="card">
+        <h3>Gửi thử một tin nhắn</h3>
+        <textarea id="testText" rows="3" maxlength="2000" placeholder="VD: Congratulations! You won a $1000 gift card. Call 0909123456 now"></textarea>
+        <div class="toolbar">
+          <select id="testChannel"><option>sms</option><option>chat</option><option>comment</option></select>
+          <button id="testBtn" class="primary">Phân loại</button>
+        </div>
+        <pre id="testResult"></pre>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

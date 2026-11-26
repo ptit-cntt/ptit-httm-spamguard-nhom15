@@ -1,0 +1,29 @@
+groups:
+  - name: spamguard
+    rules:
+      - alert: HighInferenceLatency
+        expr: histogram_quantile(0.95, sum(rate(spamguard_inference_duration_seconds_bucket[5m])) by (le)) > 0.1
+        for: 5m
+        labels: {severity: warning}
+        annotations:
+          summary: "p95 inference latency > 100ms trong 5 phút"
+      - alert: HighErrorRate
+        expr: sum(rate(spamguard_http_requests_total{status=~"5.."}[5m])) / sum(rate(spamguard_http_requests_total[5m])) > 0.02
+        for: 5m
+        labels: {severity: critical}
+        annotations:
+          summary: "Tỉ lệ lỗi 5xx > 2%"
+      - alert: SpamRateSpike
+        # Tỉ lệ spam+toxic tăng đột biến: có thể là chiến dịch spam mới hoặc data drift
+        expr: sum(rate(spamguard_predictions_total{label!="ham"}[15m])) / sum(rate(spamguard_predictions_total[15m])) > 0.6
+        for: 15m
+        labels: {severity: warning}
+        annotations:
+          summary: "Tỉ lệ spam/toxic > 60% trong 15 phút - kiểm tra drift hoặc tấn công spam"
+      - alert: LowConfidenceDrift
+        # Tỉ lệ dự đoán có confidence < 0.6 tăng -> phân phối dữ liệu thay đổi
+        expr: sum(rate(spamguard_prediction_confidence_bucket{le="0.6"}[1h])) / sum(rate(spamguard_prediction_confidence_count[1h])) > 0.25
+        for: 30m
+        labels: {severity: warning}
+        annotations:
+          summary: "> 25% dự đoán có confidence thấp - nghi ngờ data drift, cần review + retrain"

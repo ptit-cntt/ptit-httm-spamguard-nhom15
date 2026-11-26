@@ -1,0 +1,32 @@
+# SpamGuard — nginx của HOST 58.187.192.54 (server dùng chung). deploy.sh thay các biến __X__ rồi cài vào /etc/nginx.
+# Trình duyệt ─HTTPS─► __PUBLIC_HOST__ (Cloudflare Pages Function) ─HTTP :80─► nginx host ─LAN─► __UPSTREAM__
+# Worker của Cloudflare không được gọi thẳng IP (lỗi 1003) nên dùng hostname sslip.io trỏ về IP server.
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name __ORIGIN_HOST__;
+
+    client_max_body_size 1m;
+
+    access_log /var/log/nginx/spamguard.access.log;
+    error_log /var/log/nginx/spamguard.error.log;
+
+    location / {
+        # Chỉ nhận request đi qua Pages Function (có header bí mật) -> không ai bỏ qua Cloudflare để gọi thẳng origin
+        if ($http_x_origin_auth != "__ORIGIN_SECRET__") {
+            return 403;
+        }
+        proxy_pass http://__UPSTREAM__;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        # Ứng dụng sinh URL theo domain công khai, không theo hostname sslip.io
+        proxy_set_header Host __PUBLIC_HOST__;
+        proxy_set_header X-Real-IP $http_cf_connecting_ip;
+        proxy_set_header X-Forwarded-For $http_cf_connecting_ip;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Origin-Auth "";
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 60s;
+    }
+}
