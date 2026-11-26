@@ -84,7 +84,10 @@ make setup          # tạo .venv, cài thư viện (~2 GB, tải tự động)
 make train-fast     # chỉ train SVM (~10 giây) từ data/processed có sẵn
 make serve          # API: http://localhost:8000/docs · Admin: http://localhost:8000/admin
 ```
-Admin token mặc định khi chạy local: `admin-dev-token`.
+Admin token mặc định khi chạy local: `admin-dev-token`. Cổng 8000 bị chiếm thì dùng `make serve PORT=8010`.
+
+> Gói nộp **không kèm model đã huấn luyện** (giảm dung lượng). `make train-fast` cho bản demo bằng SVM;
+> muốn chạy y hệt bản production (DistilBERT ONNX INT8) thì chạy `make train` (~10 phút có GPU, lâu hơn trên CPU).
 
 **Tái lập toàn bộ thí nghiệm:**
 ```bash

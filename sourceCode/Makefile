@@ -1,4 +1,5 @@
 PY ?= .venv/bin/python
+PORT ?= 8000
 export PYTHONPATH := src:services/api
 export MLFLOW_DISABLE_AGENT_HINT := 1
 export TOKENIZERS_PARALLELISM := false
@@ -26,8 +27,8 @@ test:
 lint:
 	$(PY) -m ruff check src services scripts tests
 
-serve:            ## Chạy API + Web Admin tại http://localhost:8000/admin
-	$(PY) -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+serve:            ## Chạy API + Web Admin tại http://localhost:$(PORT)/admin (đổi cổng: make serve PORT=8010)
+	$(PY) -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT)
 
 simulate:         ## Bơm lưu lượng mẫu + mô phỏng admin review
 	$(PY) scripts/simulate_traffic.py --n 1500 --review 150

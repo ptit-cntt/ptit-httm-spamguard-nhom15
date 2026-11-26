@@ -17,8 +17,8 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 NAME="${1:-HTTM_Nhom15_SpamGuard.zip}"
-OUT_DIR="$REPO/sourceCode/dist"
-PREFIX="HTTM_Nhom15_SpamGuard"
+OUT_DIR="${OUT_DIR:-$REPO/sourceCode/dist}"   # nơi lưu file zip
+PREFIX="${PREFIX:-HTTM_Nhom15_SpamGuard}"     # tên thư mục gốc bên trong zip
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
