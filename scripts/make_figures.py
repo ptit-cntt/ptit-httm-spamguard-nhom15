@@ -234,7 +234,8 @@ def deployment() -> None:
     ax.add_patch(FancyBboxPatch((2.5, 1.0), 2.8, 4.1, boxstyle="round,pad=0.02,rounding_size=0.1",
                                 facecolor="none", edgecolor="#f97316", linestyle="--", linewidth=1.2))
     ax.text(3.9, 4.85, "Cloudflare (Internet)", ha="center", fontsize=9, weight="bold", color="#c2410c")
-    _box(ax, (2.75, 2.2), 2.3, 1.6, "spamguard.pages.dev\nPages Function\n(HTTPS, reverse proxy\n+ header bí mật)", cloud)
+    _box(ax, (2.75, 2.2), 2.3, 1.6,
+         "spamguard.pages.dev\nPages Function\n(HTTPS, reverse proxy\n+ header bí mật)", cloud)
     ax.add_patch(FancyBboxPatch((5.9, 1.0), 2.9, 4.1, boxstyle="round,pad=0.02,rounding_size=0.1",
                                 facecolor="none", edgecolor="#0284c7", linestyle="--", linewidth=1.2))
     ax.text(7.35, 4.85, "Server 58.187.192.54 (LAN .222)", ha="center", fontsize=9, weight="bold", color="#0369a1")
