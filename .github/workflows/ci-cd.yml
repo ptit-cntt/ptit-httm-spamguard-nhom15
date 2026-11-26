@@ -9,7 +9,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-api
 
 jobs:
   test:
@@ -36,6 +35,9 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      # Tên image trên GHCR bắt buộc viết thường (tổ chức "PTIT-CNTT" có chữ hoa)
+      - name: Chuẩn hoá tên image
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}-api" >> "$GITHUB_ENV"
       - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
