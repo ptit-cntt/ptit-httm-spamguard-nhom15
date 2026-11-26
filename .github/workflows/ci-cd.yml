@@ -35,7 +35,7 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      # Tên image trên GHCR bắt buộc viết thường (tổ chức "PTIT-CNTT" có chữ hoa)
+      # Tên image trên GHCR bắt buộc viết thường (phòng khi owner/repo có chữ hoa)
       - name: Chuẩn hoá tên image
         run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}-api" >> "$GITHUB_ENV"
       - uses: docker/login-action@v3
