@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Chạy feedback loop trong container trainer
+        working-directory: sourceCode
         env:
           FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
           MODEL_FLAG: ${{ inputs.model && format('--model {0}', inputs.model) || '' }}
@@ -34,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: feedback-loop-report
-          path: reports/feedback_loop/*.json
+          path: sourceCode/reports/feedback_loop/*.json

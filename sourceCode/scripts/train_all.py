@@ -55,6 +55,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", nargs="+", default=MODEL_TYPES, choices=MODEL_TYPES)
     parser.add_argument("--no-promote", action="store_true")
+    parser.add_argument("--no-report", action="store_true",
+                        help="Không ghi đè reports/ (dùng cho make train-fast để giữ kết quả thí nghiệm đã nộp)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
@@ -64,17 +66,20 @@ def main() -> None:
 
     metrics_path = REPORT_DIR / "metrics.json"
     previous = json.loads(metrics_path.read_text()) if metrics_path.exists() else {}
-    results = previous.get("results", {})
-    versions = previous.get("versions", {})
+    # Chỉ giữ kết quả cũ của các version còn trong registry (vd. máy mới clone: registry trống)
+    registered = {v["version"]: v["model_type"] for v in ModelRegistry().list_versions()["versions"]}
+    versions = {m: v for m, v in previous.get("versions", {}).items() if registered.get(v) == m}
+    results = {m: r for m, r in previous.get("results", {}).items() if m in versions}
     for model_type in args.models:
         versions[model_type], results[model_type] = train_evaluate_register(
             model_type, splits, summary["data_version"])
 
     champion = select_champion(results)
-    save_json(metrics_path, {"data_version": summary["data_version"], "results": results,
-                             "versions": versions, "champion": champion})
-    table = write_comparison(results, versions, champion)
-    print(table.round(4).to_string(index=False))
+    if not args.no_report:
+        save_json(metrics_path, {"data_version": summary["data_version"], "results": results,
+                                 "versions": versions, "champion": champion})
+        table = write_comparison(results, versions, champion)
+        print(table.round(4).to_string(index=False))
 
     if not args.no_promote:
         ModelRegistry().promote(versions[champion], reason=(

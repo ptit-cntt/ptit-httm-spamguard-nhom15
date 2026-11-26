@@ -3,7 +3,7 @@ export PYTHONPATH := src:services/api
 export MLFLOW_DISABLE_AGENT_HINT := 1
 export TOKENIZERS_PARALLELISM := false
 
-.PHONY: setup data train figures test lint serve simulate retrain loadtest mlflow-ui docker-up docker-down
+.PHONY: setup data train train-fast figures test lint serve simulate retrain loadtest mlflow-ui docker-up docker-down package
 
 setup:            ## Tạo virtualenv và cài dependency
 	python3 -m venv .venv && $(PY) -m pip install -r requirements-dev.txt
@@ -13,6 +13,9 @@ data:             ## Tải 4 bộ dữ liệu + làm sạch + chia train/val/tes
 
 train:            ## Huấn luyện + so sánh 4 model, đăng ký registry, promote champion
 	$(PY) scripts/train_all.py
+
+train-fast:       ## Chỉ train SVM (~10 giây, không cần GPU) - đủ để chạy demo API + Web Admin
+	$(PY) scripts/train_all.py --models svm --no-report
 
 figures:          ## Sinh biểu đồ EDA / so sánh model / kiến trúc
 	$(PY) scripts/make_figures.py
@@ -43,3 +46,6 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+package:          ## Đóng gói bài nộp (bỏ .venv, model, dữ liệu gốc, bí mật) -> dist/
+	bash scripts/package_submission.sh

@@ -73,7 +73,7 @@ step_sync() {
   rsync -az --delete -e "$RSYNC_RSH" \
     --exclude .venv --exclude .git --exclude __pycache__ --exclude .pytest_cache --exclude .ruff_cache \
     --exclude models --exclude mlruns --exclude mlflow.db --exclude 'data/raw' --exclude 'data/*.db' \
-    --exclude reports --exclude '*.docx' --exclude '*.xlsx' --exclude 'deploy/cloudflare-pages' \
+    --exclude reports --exclude docs --exclude dist --exclude 'deploy/cloudflare-pages' \
     "$ROOT/" "mnv@58.187.192.54:$REMOTE_DIR/"
 }
 
