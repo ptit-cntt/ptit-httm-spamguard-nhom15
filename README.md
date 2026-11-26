@@ -1,15 +1,15 @@
 # SpamGuard – Hệ thống lọc Spam & Tin nhắn độc hại
 
 **Smart Anti-Spam & Malicious Content Filtering System** – Đề tài 12, học phần *Phát triển các hệ thống thông minh*
-(INT14151), Học viện Công nghệ Bưu chính Viễn thông – **Nhóm 04**.
+(INT14151), Học viện Công nghệ Bưu chính Viễn thông – **Nhóm 15**.
 
 Phân loại tin nhắn ngắn (SMS, chat, bình luận) **song ngữ Anh – Việt** thành 3 lớp `ham` (hợp lệ) · `spam` (rác,
 quảng cáo, lừa đảo) · `toxic` (xúc phạm, thù ghét) và quyết định `allow | review | block`.
 
 | Thành viên | MSSV | Vai trò |
 |---|---|---|
-| Phạm Vương Mạnh (trưởng nhóm) | K24DTCN073 | Quản lý dự án, kiến trúc, MLOps (registry, feedback loop, CI/CD), triển khai |
-| Nguyễn Quốc Cường | K24DTCN045 | Dữ liệu: thu thập, làm sạch, EDA; mô hình SVM & Random Forest |
+| Nguyễn Quốc Cường (trưởng nhóm) | K24DTCN045 | Quản lý dự án, tổng hợp báo cáo; dữ liệu (thu thập, làm sạch, EDA); mô hình SVM & Random Forest |
+| Phạm Vương Mạnh | K24DTCN073 | Kiến trúc, MLOps (registry, feedback loop, CI/CD), triển khai |
 | Nguyễn Hữu Hoà | K24DTCN056 | Học sâu: Bi-GRU, DistilBERT, export ONNX, đánh giá |
 | Nguyễn Vũ Thắng | K24DTCN091 | API Service, Web Admin, Docker, Monitoring, kiểm thử & load test |
 
@@ -22,7 +22,8 @@ quảng cáo, lừa đảo) · `toxic` (xúc phạm, thù ghét) và quyết đ�
 │   ├── Project_Action Plan.docx              Kế hoạch dự án
 │   ├── Project_Final Report.docx             Báo cáo cuối kỳ (27 trang)
 │   ├── Project_Work Breakdown Structure.xlsx Phân chia công việc + Gantt
-│   └── SpamGuard_Slides.pptx                 Slide thuyết trình (16 slide)
+│   ├── SpamGuard_Slides.pptx                 Slide thuyết trình (16 slide)
+│   └── SpamGuard_Slides.pdf                  Slide thuyết trình bản PDF
 ├── sourceCode/    💻 TOÀN BỘ MÃ NGUỒN ỨNG DỤNG
 └── README.md      📘 Tệp này: giới thiệu + hướng dẫn chạy
 ```
@@ -106,7 +107,7 @@ make train-fast                 # API cần có model trong models/registry
 docker compose up -d --build    # api:8000, mlflow:5000, prometheus:9090, grafana:3000
 ```
 
-**Đóng gói bài nộp:** `cd sourceCode && make package` → `sourceCode/dist/HTTM_Nhom04_SpamGuard.zip`
+**Đóng gói bài nộp:** `cd sourceCode && make package` → `sourceCode/dist/HTTM_Nhom15_SpamGuard.zip`
 (chỉ gồm `docs/`, mã nguồn và `README.md`; bỏ `.venv`, model đã train, dữ liệu gốc, database, bí mật triển khai).
 
 ---

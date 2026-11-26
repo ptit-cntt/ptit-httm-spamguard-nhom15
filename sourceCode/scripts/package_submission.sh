@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Đóng gói bài nộp với đúng cấu trúc repo:
-#   HTTM_Nhom04_SpamGuard/
+#   HTTM_Nhom15_SpamGuard/
 #   ├── docs/         tài liệu báo cáo
 #   ├── sourceCode/   mã nguồn (chỉ file cần thiết)
 #   └── README.md     giới thiệu + hướng dẫn chạy
@@ -12,13 +12,13 @@
 #   deploy/.build/, *.db, mlflow.db, mlruns/, cache
 # và bí mật triển khai sourceCode/deploy/.env (không bao giờ được nộp).
 #
-# Dùng (trong sourceCode/): make package  -> sourceCode/dist/HTTM_Nhom04_SpamGuard.zip
+# Dùng (trong sourceCode/): make package  -> sourceCode/dist/HTTM_Nhom15_SpamGuard.zip
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
-NAME="${1:-HTTM_Nhom04_SpamGuard.zip}"
+NAME="${1:-HTTM_Nhom15_SpamGuard.zip}"
 OUT_DIR="$REPO/sourceCode/dist"
-PREFIX="HTTM_Nhom04_SpamGuard"
+PREFIX="HTTM_Nhom15_SpamGuard"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
