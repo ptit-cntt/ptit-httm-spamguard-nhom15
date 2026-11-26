@@ -223,6 +223,38 @@ def feedback_loop() -> None:
     _save(fig, "feedback_loop.png")
 
 
+def deployment() -> None:
+    """Sơ đồ triển khai thực tế: Cloudflare Pages -> Nginx server -> Docker PC LAN."""
+    fig, ax = plt.subplots(figsize=(13, 5.6))
+    ax.set_xlim(0, 13)
+    ax.set_ylim(0, 5.8)
+    ax.axis("off")
+    cloud, server, lan, user = "#fde7d4", "#e0f2fe", "#dcfce7", "#f1f5f9"
+    _box(ax, (0.1, 2.4), 1.9, 1.2, "Người dùng /\nNền tảng nhắn tin", user)
+    ax.add_patch(FancyBboxPatch((2.5, 1.0), 2.8, 4.1, boxstyle="round,pad=0.02,rounding_size=0.1",
+                                facecolor="none", edgecolor="#f97316", linestyle="--", linewidth=1.2))
+    ax.text(3.9, 4.85, "Cloudflare (Internet)", ha="center", fontsize=9, weight="bold", color="#c2410c")
+    _box(ax, (2.75, 2.2), 2.3, 1.6, "spamguard.pages.dev\nPages Function\n(HTTPS, reverse proxy\n+ header bí mật)", cloud)
+    ax.add_patch(FancyBboxPatch((5.9, 1.0), 2.9, 4.1, boxstyle="round,pad=0.02,rounding_size=0.1",
+                                facecolor="none", edgecolor="#0284c7", linestyle="--", linewidth=1.2))
+    ax.text(7.35, 4.85, "Server 58.187.192.54 (LAN .222)", ha="center", fontsize=9, weight="bold", color="#0369a1")
+    _box(ax, (6.15, 2.2), 2.4, 1.6, "Nginx :80\nspamguard.58-187-192-54\n.sslip.io\n(chặn nếu thiếu header)", server)
+    ax.add_patch(FancyBboxPatch((9.4, 0.3), 3.5, 4.8, boxstyle="round,pad=0.02,rounding_size=0.1",
+                                facecolor="none", edgecolor="#16a34a", linestyle="--", linewidth=1.2))
+    ax.text(11.15, 4.85, "PC LAN 192.168.1.5 – Docker", ha="center", fontsize=9, weight="bold", color="#15803d")
+    for i, (label, y) in enumerate([("api :8010 (FastAPI + ONNX)", 3.95), ("postgres (volume pgdata)", 3.2),
+                                     ("prometheus :9095", 2.45), ("grafana :3010", 1.7), ("mlflow :5010", 0.95)]):
+        _box(ax, (9.6, y - 0.25), 3.1, 0.55, label, lan if i == 0 else "#f0fdf4", fontsize=8)
+    _arrow(ax, (2.0, 3.0), (2.75, 3.0))
+    _arrow(ax, (5.05, 3.0), (6.15, 3.0))
+    _arrow(ax, (8.55, 3.0), (9.6, 4.0))
+    for x, y, label in ((2.38, 3.3, "HTTPS"), (5.6, 3.3, "HTTP +\nX-Origin-Auth"), (8.85, 3.75, "LAN\n:8010")):
+        ax.text(x, y, label, fontsize=7.5, ha="center", va="bottom", color="#475569")
+    ax.text(6.5, 0.45, "Điều khiển Docker: server → tcp://192.168.1.5:2375 (chỉ mở cho IP server)",
+            fontsize=8, ha="center", color="#475569")
+    _save(fig, "deployment.png")
+
+
 def main() -> None:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     processed = ROOT / "data" / "processed"
@@ -234,6 +266,7 @@ def main() -> None:
         model_charts(json.loads(metrics_path.read_text()))
     architecture()
     feedback_loop()
+    deployment()
     print("Đã sinh hình tại", FIG_DIR)
 
 

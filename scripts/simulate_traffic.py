@@ -24,7 +24,8 @@ BATCH_SIZE = 50
 
 
 def post(base_url: str, path: str, payload: dict, token: str | None = None) -> dict:
-    headers = {"Content-Type": "application/json"}
+    # Cloudflare chặn User-Agent mặc định "Python-urllib" (bot) -> tự khai báo
+    headers = {"Content-Type": "application/json", "User-Agent": "spamguard-traffic-simulator/1.0"}
     if token:
         headers["X-Admin-Token"] = token
     request = urllib.request.Request(f"{base_url}{path}", data=json.dumps(payload).encode(), headers=headers)
