@@ -2,6 +2,25 @@
 
 **Smart Anti-Spam & Malicious Content Filtering System** – Đề tài 12, học phần *Phát triển các hệ thống thông minh* (INT14151), Nhóm 04.
 
+## 🚀 Demo trực tuyến
+
+| Thành phần | Link |
+|---|---|
+| Web Admin (cần Admin Token) | https://spamguard.pages.dev/admin/ |
+| Tài liệu API (Swagger) | https://spamguard.pages.dev/docs |
+| Health check | https://spamguard.pages.dev/ready |
+
+Thử nhanh API lọc tin nhắn (không cần token):
+```bash
+curl -X POST https://spamguard.pages.dev/v1/messages/classify \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Chúc mừng bạn trúng thưởng iPhone 17, bấm link bit.ly/abc để nhận quà", "channel": "sms"}'
+# → {"label":"spam","confidence":0.88,"action":"block",...}
+```
+
+Hạ tầng demo: Cloudflare Pages Function (HTTPS, reverse proxy) → Nginx trên server → Docker trên PC LAN
+(api, postgres, mlflow, prometheus, grafana). Chi tiết triển khai: [`deploy/`](deploy/).
+
 | Thành viên | MSSV | Vai trò |
 |---|---|---|
 | Phạm Vương Mạnh (trưởng nhóm) | K24DTCN073 | Quản lý dự án, kiến trúc hệ thống, MLOps (registry, feedback loop, CI/CD) |
