@@ -81,6 +81,16 @@ async def observe_requests(request: Request, call_next):
     return response
 
 
+@app.middleware("http")
+async def revalidate_admin_assets(request: Request, call_next):
+    response = await call_next(request)
+    # Cloudflare mặc định cache .js/.css ở edge -> sau deploy trình duyệt nhận HTML mới + JS cũ.
+    # no-cache buộc mọi tầng hỏi lại origin (rẻ nhờ ETag) nên Web Admin luôn đồng bộ phiên bản.
+    if request.url.path.startswith("/admin"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 def get_db():
     with SessionLocal() as session:
         yield session

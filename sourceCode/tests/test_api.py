@@ -87,3 +87,9 @@ def test_admin_endpoint_with_tampered_session_token_returns_401(client):
     payload, signature = token.split(".")
     tampered = f"{payload}.{signature[:-2]}xx"
     assert client.get("/v1/admin/stats", headers={"X-Admin-Token": tampered}).status_code == 401
+
+
+def test_admin_static_assets_send_no_cache_header(client):
+    response = client.get("/admin/app.js")
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-cache"
