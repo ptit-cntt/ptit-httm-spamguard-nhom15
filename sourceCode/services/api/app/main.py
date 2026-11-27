@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import os
-import secrets
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
@@ -20,7 +19,7 @@ from sqlalchemy.orm import Session
 from spamguard import __version__
 from spamguard.config import PROJECT_ROOT, load_params
 
-from . import metrics
+from . import auth, metrics
 from .db import Feedback, MessageLog, SessionLocal, init_db
 from .model_manager import ModelManager
 from .schemas import (
@@ -30,6 +29,8 @@ from .schemas import (
     ClassifyResponse,
     FeedbackRequest,
     FeedbackResponse,
+    LoginRequest,
+    LoginResponse,
     MessageOut,
     PromoteRequest,
     ReviewRequest,
@@ -38,8 +39,6 @@ from .schemas import (
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger("spamguard.api")
 
-_DEFAULT_ADMIN_TOKEN = "admin-dev-token"
-ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", _DEFAULT_ADMIN_TOKEN)
 ADMIN_WEB_DIR = Path(os.getenv("ADMIN_WEB_DIR", PROJECT_ROOT / "admin-web"))
 MAX_PAGE_SIZE = 200
 MAX_STATS_DAYS = 90
@@ -56,8 +55,10 @@ def _sync_model_gauge() -> None:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    if ADMIN_TOKEN == _DEFAULT_ADMIN_TOKEN:
+    if auth.ADMIN_TOKEN == auth.DEFAULT_ADMIN_TOKEN:
         logger.warning("ADMIN_TOKEN đang dùng giá trị mặc định - KHÔNG dùng cho production")
+    if auth.ADMIN_PASSWORD == auth.DEFAULT_ADMIN_PASSWORD:
+        logger.warning("ADMIN_PASSWORD đang dùng giá trị mặc định - chỉ dùng tạm thời")
     init_db()
     model_manager.load_production(force=True)
     _sync_model_gauge()
@@ -86,9 +87,8 @@ def get_db():
 
 
 def require_admin(x_admin_token: str = Header(default="")) -> None:
-    # compare_digest: so sánh thời gian hằng, chống timing attack
-    if not secrets.compare_digest(x_admin_token.encode(), ADMIN_TOKEN.encode()):
-        raise HTTPException(status_code=401, detail="Admin token không hợp lệ")
+    if not auth.is_admin_token_valid(x_admin_token):
+        raise HTTPException(status_code=401, detail="Phiên đăng nhập không hợp lệ hoặc đã hết hạn")
 
 
 def _decide_action(label: str, confidence: float) -> str:
@@ -189,6 +189,19 @@ def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
     db.commit()
     metrics.FEEDBACK.labels(request.correct_label, "user").inc()
     return FeedbackResponse(id=feedback.id)
+
+
+# ----------------------------- Auth -----------------------------------------
+
+@app.post("/v1/auth/login", response_model=LoginResponse, tags=["auth"])
+def login(request: LoginRequest):
+    """Đăng nhập Web Admin bằng tài khoản/mật khẩu (tạm cấu hình qua ADMIN_USERNAME/ADMIN_PASSWORD)."""
+    if not auth.verify_credentials(request.username, request.password):
+        # Không log mật khẩu; chỉ ghi username để truy vết đăng nhập sai
+        logger.warning("Đăng nhập thất bại cho username=%r", request.username)
+        raise HTTPException(status_code=401, detail="Sai tài khoản hoặc mật khẩu")
+    return LoginResponse(access_token=auth.create_session_token(request.username),
+                         expires_in=auth.SESSION_TTL_SECONDS, username=request.username)
 
 
 # ----------------------------- Admin API ------------------------------------

@@ -68,6 +68,18 @@ class PromoteRequest(BaseModel):
     reason: str = Field(default="manual promote from admin", max_length=300)
 
 
+class LoginRequest(BaseModel):
+    username: str = Field(..., min_length=1, max_length=64)
+    password: str = Field(..., min_length=1, max_length=128)
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    username: str
+
+
 class MessageOut(BaseModel):
     id: int
     text: str

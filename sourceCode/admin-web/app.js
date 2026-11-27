@@ -14,13 +14,18 @@ function setToken(token) {
   try { sessionStorage.setItem(TOKEN_KEY, token); } catch { /* private mode: bỏ qua */ }
 }
 
+function clearToken() {
+  try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* private mode: bỏ qua */ }
+}
+
 async function api(path, options = {}) {
   const response = await fetch(path, {
     ...options,
     headers: { "Content-Type": "application/json", "X-Admin-Token": getToken(), ...(options.headers || {}) },
   });
   if (response.status === 401) {
-    showLogin("Token không hợp lệ hoặc đã hết hạn");
+    clearToken();
+    showLogin("Phiên đăng nhập không hợp lệ hoặc đã hết hạn, vui lòng đăng nhập lại");
     throw new Error("unauthorized");
   }
   if (!response.ok) {
@@ -212,14 +217,43 @@ function showTab(name) {
 
 function showLogin(message = "") {
   document.getElementById("login").classList.remove("hidden");
+  document.getElementById("logoutBtn").classList.add("hidden");
   document.querySelectorAll(".tab").forEach((s) => s.classList.add("hidden"));
   document.getElementById("loginError").textContent = message;
 }
 
-document.getElementById("loginBtn").addEventListener("click", () => {
-  setToken(document.getElementById("tokenInput").value.trim());
+async function login(event) {
+  event.preventDefault();
+  const errorBox = document.getElementById("loginError");
+  const passwordInput = document.getElementById("passwordInput");
+  errorBox.textContent = "";
+  // Gọi fetch trực tiếp (không qua api()) vì 401 ở đây là sai mật khẩu, không phải hết phiên
+  const response = await fetch("/v1/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: document.getElementById("usernameInput").value.trim(), password: passwordInput.value }),
+  });
+  passwordInput.value = "";
+  if (!response.ok) {
+    errorBox.textContent = response.status === 401 ? "Sai tài khoản hoặc mật khẩu" : `Lỗi đăng nhập (${response.status})`;
+    return;
+  }
+  setToken((await response.json()).access_token);
+  showApp("dashboard");
+}
+
+function showApp(tab) {
   document.getElementById("login").classList.add("hidden");
-  showTab("dashboard");
+  document.getElementById("logoutBtn").classList.remove("hidden");
+  showTab(tab);
+}
+
+document.getElementById("loginForm").addEventListener("submit", (event) => login(event).catch((error) => {
+  document.getElementById("loginError").textContent = `Không kết nối được API: ${error.message}`;
+}));
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  clearToken();
+  showLogin();
 });
 document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
 document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
@@ -236,4 +270,4 @@ if (hashToken) {
   history.replaceState(null, "", location.pathname + location.search);
 }
 const initialTab = new URLSearchParams(location.search).get("tab") || "dashboard";
-if (getToken()) showTab(initialTab); else showLogin();
+if (getToken()) showApp(initialTab); else showLogin();

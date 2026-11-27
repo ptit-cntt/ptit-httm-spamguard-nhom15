@@ -10,6 +10,10 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "services" / "api")]
+# Đặt trước khi collect test: app.auth đọc biến môi trường ngay lúc import
+os.environ["ADMIN_TOKEN"] = "test-token"
+os.environ["ADMIN_USERNAME"] = "admin"
+os.environ["ADMIN_PASSWORD"] = "1234"
 
 TINY_CORPUS = {
     "ham": ["see you at lunch tomorrow", "mai đi học nhé bạn", "ok thanks for the update",
@@ -47,7 +51,6 @@ def tiny_registry(tmp_path_factory) -> Path:
 def client(tiny_registry, tmp_path_factory):
     os.environ["SPAMGUARD_REGISTRY_DIR"] = str(tiny_registry)
     os.environ["DATABASE_URL"] = f"sqlite:///{tmp_path_factory.mktemp('db') / 'test.db'}"
-    os.environ["ADMIN_TOKEN"] = "test-token"
     from app.main import app
     from fastapi.testclient import TestClient
 

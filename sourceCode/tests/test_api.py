@@ -67,3 +67,23 @@ def test_admin_models_lists_registry(client):
 def test_metrics_endpoint_exposes_prometheus_metrics(client):
     body = client.get("/metrics").text
     assert "spamguard_predictions_total" in body and "spamguard_model_info" in body
+
+
+def test_login_with_valid_credentials_returns_session_token(client):
+    response = client.post("/v1/auth/login", json={"username": "admin", "password": "1234"})
+    body = response.json()
+    assert response.status_code == 200
+    assert body["username"] == "admin" and body["expires_in"] > 0
+    assert client.get("/v1/admin/stats", headers={"X-Admin-Token": body["access_token"]}).status_code == 200
+
+
+def test_login_with_wrong_password_returns_401(client):
+    assert client.post("/v1/auth/login", json={"username": "admin", "password": "wrong"}).status_code == 401
+    assert client.post("/v1/auth/login", json={"username": "root", "password": "1234"}).status_code == 401
+
+
+def test_admin_endpoint_with_tampered_session_token_returns_401(client):
+    token = client.post("/v1/auth/login", json={"username": "admin", "password": "1234"}).json()["access_token"]
+    payload, signature = token.split(".")
+    tampered = f"{payload}.{signature[:-2]}xx"
+    assert client.get("/v1/admin/stats", headers={"X-Admin-Token": tampered}).status_code == 401

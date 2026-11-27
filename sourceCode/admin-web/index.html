@@ -18,14 +18,18 @@
       <button data-tab="tester">Thử bộ lọc</button>
     </nav>
     <div class="model-badge" id="modelBadge">model: –</div>
+    <button id="logoutBtn" class="logout hidden">Đăng xuất</button>
   </header>
 
   <main>
     <section id="login" class="card login hidden">
       <h2>Đăng nhập quản trị</h2>
-      <p>Nhập Admin Token (biến môi trường <code>ADMIN_TOKEN</code> của API).</p>
-      <input id="tokenInput" type="password" placeholder="Admin token" autocomplete="off">
-      <button id="loginBtn" class="primary">Đăng nhập</button>
+      <form id="loginForm">
+        <input id="usernameInput" name="username" placeholder="Tài khoản" autocomplete="username" required>
+        <input id="passwordInput" name="password" type="password" placeholder="Mật khẩu"
+               autocomplete="current-password" required>
+        <button id="loginBtn" type="submit" class="primary">Đăng nhập</button>
+      </form>
       <p id="loginError" class="error"></p>
     </section>
 
