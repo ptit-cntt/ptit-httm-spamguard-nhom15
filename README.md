@@ -57,7 +57,7 @@ mô hình ứng viên kém tổng quát hơn (`sourceCode/reports/feedback_loop/
 
 | Thành phần | Link |
 |---|---|
-| Web Admin (cần Admin Token) | https://spamguard.pages.dev/admin/ |
+| Web Admin (đăng nhập `admin` / `1234`) | https://spamguard.pages.dev/admin/ |
 | Tài liệu API (Swagger) | https://spamguard.pages.dev/docs |
 | Health check | https://spamguard.pages.dev/ready |
 
@@ -84,7 +84,7 @@ make setup          # tạo .venv, cài thư viện (~2 GB, tải tự động)
 make train-fast     # chỉ train SVM (~10 giây) từ data/processed có sẵn
 make serve          # API: http://localhost:8000/docs · Admin: http://localhost:8000/admin
 ```
-Admin token mặc định khi chạy local: `admin-dev-token`. Cổng 8000 bị chiếm thì dùng `make serve PORT=8010`.
+Web Admin đăng nhập bằng tài khoản `admin` / mật khẩu `1234` (đổi qua biến môi trường `ADMIN_USERNAME`, `ADMIN_PASSWORD`); script gọi API quản trị vẫn dùng được header `X-Admin-Token` (mặc định local: `admin-dev-token`). Cổng 8000 bị chiếm thì dùng `make serve PORT=8010`.
 
 > Gói nộp **không kèm model đã huấn luyện** (giảm dung lượng). `make train-fast` cho bản demo bằng SVM;
 > muốn chạy y hệt bản production (DistilBERT ONNX INT8) thì chạy `make train` (~10 phút có GPU, lâu hơn trên CPU).

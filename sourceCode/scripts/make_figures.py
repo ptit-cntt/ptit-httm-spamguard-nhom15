@@ -242,7 +242,7 @@ def deployment() -> None:
     _box(ax, (6.15, 2.2), 2.4, 1.6, "Nginx :80\nspamguard.58-187-192-54\n.sslip.io\n(chặn nếu thiếu header)", server)
     ax.add_patch(FancyBboxPatch((9.4, 0.3), 3.5, 4.8, boxstyle="round,pad=0.02,rounding_size=0.1",
                                 facecolor="none", edgecolor="#16a34a", linestyle="--", linewidth=1.2))
-    ax.text(11.15, 4.85, "PC LAN 192.168.1.5 – Docker", ha="center", fontsize=9, weight="bold", color="#15803d")
+    ax.text(11.15, 4.85, "PC LAN 192.168.1.234 – Docker", ha="center", fontsize=9, weight="bold", color="#15803d")
     for i, (label, y) in enumerate([("api :8010 (FastAPI + ONNX)", 3.95), ("postgres (volume pgdata)", 3.2),
                                      ("prometheus :9095", 2.45), ("grafana :3010", 1.7), ("mlflow :5010", 0.95)]):
         _box(ax, (9.6, y - 0.25), 3.1, 0.55, label, lan if i == 0 else "#f0fdf4", fontsize=8)
@@ -251,7 +251,7 @@ def deployment() -> None:
     _arrow(ax, (8.55, 3.0), (9.6, 4.0))
     for x, y, label in ((2.38, 3.3, "HTTPS"), (5.6, 3.3, "HTTP +\nX-Origin-Auth"), (8.85, 3.75, "LAN\n:8010")):
         ax.text(x, y, label, fontsize=7.5, ha="center", va="bottom", color="#475569")
-    ax.text(6.5, 0.45, "Điều khiển Docker: server → tcp://192.168.1.5:2375 (chỉ mở cho IP server)",
+    ax.text(6.5, 0.45, "Điều khiển Docker: server → tcp://192.168.1.234:2375 (chỉ mở cho IP server)",
             fontsize=8, ha="center", color="#475569")
     _save(fig, "deployment.png")
 
