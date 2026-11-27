@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Triển khai SpamGuard:
-#   Trình duyệt ─HTTPS─► <project>.pages.dev (Pages Function) ─HTTP─► Nginx 58.187.192.54 ─LAN─► Docker 192.168.1.5
+#   Trình duyệt ─HTTPS─► <project>.pages.dev (Pages Function) ─HTTP─► Nginx 58.187.192.54 ─LAN─► Docker 192.168.1.234
 #
 # Dùng:  deploy/deploy.sh <bước>
 #   prepare   tạo deploy/.env (bí mật ngẫu nhiên) + registry đã lọc cho image
 #   sync      đồng bộ mã nguồn lên server (jump host)
-#   docker    build & chạy container trên Docker daemon 192.168.1.5 (qua server)
+#   docker    build & chạy container trên Docker daemon 192.168.1.234 (qua server)
 #   pages     tạo/deploy Cloudflare Pages project + cấu hình biến (cần `npx wrangler login` trước)
 #   nginx     cài site Nginx trên server (cần sudo) – chạy sau `pages` để biết domain công khai
 #   check     kiểm tra end-to-end
@@ -23,8 +23,8 @@ ENV_FILE="$DEPLOY/.env"
 SSH_CMD="${SSH_CMD:-ssh mnv@58.187.192.54}"
 RSYNC_RSH="${RSYNC_RSH:-$SSH_CMD}"
 REMOTE_DIR="spamguard-deploy"
-DOCKER_HOST_LAN="tcp://192.168.1.5:2375"
-UPSTREAM="192.168.1.5:8010"
+DOCKER_HOST_LAN="tcp://192.168.1.234:2375"
+UPSTREAM="192.168.1.234:8010"
 ORIGIN_HOST="spamguard.58-187-192-54.sslip.io"
 PAGES_PROJECT="${PAGES_PROJECT:-spamguard}"
 REGISTRY_VERSIONS="1 2 3 4"   # chỉ đóng gói 4 model gốc của thí nghiệm CLO1

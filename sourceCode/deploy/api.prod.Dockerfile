@@ -1,4 +1,4 @@
-# ---- SpamGuard API – bản production cho Docker daemon ở xa (192.168.1.5) ----
+# ---- SpamGuard API – bản production cho Docker daemon ở xa (192.168.1.234) ----
 # Daemon ở xa không thấy ổ đĩa của máy chạy lệnh deploy -> không bind mount được.
 # Vì vậy Model Registry được đóng gói vào image và khởi tạo named volume ở lần chạy đầu.
 FROM python:3.12-slim

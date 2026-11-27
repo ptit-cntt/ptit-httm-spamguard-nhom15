@@ -1,4 +1,4 @@
-# Triển khai lên Docker của PC LAN 192.168.1.5 (điều khiển qua DOCKER_HOST=tcp://192.168.1.5:2375).
+# Triển khai lên Docker của PC LAN 192.168.1.234 (điều khiển qua DOCKER_HOST=tcp://192.168.1.234:2375).
 # Chạy từ thư mục gốc project:  docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env up -d --build
 # Không dùng bind mount: mọi file cần thiết được COPY vào image, dữ liệu nằm trong named volume.
 name: spamguard

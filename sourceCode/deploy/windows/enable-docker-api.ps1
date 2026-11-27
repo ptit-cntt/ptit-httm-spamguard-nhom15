@@ -1,11 +1,11 @@
-# Chạy bằng PowerShell (Run as Administrator) trên PC 192.168.1.5.
+# Chạy bằng PowerShell (Run as Administrator) trên PC 192.168.1.234.
 # Bước trước: Docker Desktop > Settings > General > bật
 #   "Expose daemon on tcp://localhost:2375 without TLS" > Apply & restart.
 #
 # CẢNH BÁO: Docker API 2375 không có xác thực. Ai gọi được cổng này có toàn quyền trên máy.
 # Script chỉ mở cho đúng IP server 192.168.1.222; muốn đóng lại thì chạy disable-docker-api.ps1.
 
-$LanIp = "192.168.1.5"
+$LanIp = "192.168.1.234"
 $DeployServerIp = "192.168.1.222"
 
 # Docker Desktop chỉ lắng nghe 127.0.0.1:2375 -> chuyển tiếp từ IP LAN vào
